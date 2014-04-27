@@ -46,14 +46,14 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * <p>Runs a set of connections to the P2P network, brings up connections to replace disconnected nodes and manages
  * the interaction between them all. Most applications will want to use one of these.</p>
- * 
+ *
  * <p>PeerGroup tries to maintain a constant number of connections to a set of distinct peers.
  * Each peer runs a network listener in its own thread.  When a connection is lost, a new peer
  * will be tried after a delay as long as the number of connections less than the maximum.</p>
- * 
+ *
  * <p>Connections are made to addresses from a provided list.  When that list is exhausted,
  * we start again from the head of the list.</p>
- * 
+ *
  * <p>The PeerGroup can broadcast a transaction to the currently connected set of peers.  It can
  * also handle download of the blockchain from peers, restarting the process when peers die.</p>
  *
@@ -98,7 +98,7 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
     // until we reach this count.
     @GuardedBy("lock") private int maxConnections;
     // Minimum protocol version we will allow ourselves to connect to: require Bloom filtering.
-    private volatile int vMinRequiredProtocolVersion = FilteredBlock.MIN_PROTOCOL_VERSION;
+    private volatile int vMinRequiredProtocolVersion = FilteredBlock.MIN_PROTOCOL_VERSION;  //
 
     // Runs a background thread that we use for scheduling pings to our peers, so we can measure their performance
     // and network latency. We ping peers every pingIntervalMsec milliseconds.
@@ -360,7 +360,7 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
         ver.appendToSubVer(name, version, comments);
         setVersionMessage(ver);
     }
-    
+
     // Updates the relayTxesBeforeFilter flag of ver
     private void updateVersionMessageRelayTxesBeforeFilter(VersionMessage ver) {
         // We will provide the remote node with a bloom filter (ie they shouldn't relay yet)
@@ -495,15 +495,12 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
     }
 
     protected void discoverPeers() throws PeerDiscoveryException {
-        long start = System.currentTimeMillis();
+        //long start = System.currentTimeMillis();
         Set<PeerAddress> addressSet = Sets.newHashSet();
         for (PeerDiscovery peerDiscovery : peerDiscoverers) {
             InetSocketAddress[] addresses;
             addresses = peerDiscovery.getPeers(5, TimeUnit.SECONDS);
-            for (InetSocketAddress address : addresses) {
-                if(address != null)
-                    addressSet.add(new PeerAddress(address));
-            }
+            for (InetSocketAddress address : addresses) addressSet.add(new PeerAddress(address));
             if (addressSet.size() > 0) break;
         }
         lock.lock();
@@ -514,8 +511,8 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
         } finally {
             lock.unlock();
         }
-        log.info("Peer discovery took {}msec and returned {} items",
-                System.currentTimeMillis() - start, addressSet.size());
+        //log.info("Peer discovery took {}msec and returned {} items",
+        //        System.currentTimeMillis() - start, addressSet.size());
     }
 
     @Override
@@ -729,13 +726,13 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
             lock.unlock();
         }
     }
-    
+
     /**
      * <p>Sets the false positive rate of bloom filters given to peers. The default is {@link #DEFAULT_BLOOM_FILTER_FP_RATE}.</p>
      *
      * <p>Be careful regenerating the bloom filter too often, as it decreases anonymity because remote nodes can
      * compare transactions against both the new and old filters to significantly decrease the false positive rate.</p>
-     * 
+     *
      * <p>See the docs for {@link BloomFilter#BloomFilter(int, double, long, BloomFilter.BloomUpdate)} for a brief
      * explanation of anonymity when using bloom filters.</p>
      */
@@ -760,7 +757,7 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
     /**
      * Connect to a peer by creating a channel to the destination address.  This should not be
      * used normally - let the PeerGroup manage connections through {@link #start()}
-     * 
+     *
      * @param address destination IP and port.
      * @return The newly created Peer object or null if the peer could not be connected.
      *         Use {@link com.google.bitcoin.core.Peer#getConnectionOpenFuture()} if you
@@ -844,7 +841,7 @@ public class PeerGroup extends AbstractExecutionThreadService implements Transac
 
     /**
      * Download the blockchain from peers. Convenience that uses a {@link DownloadListener} for you.<p>
-     * 
+     *
      * This method waits until the download is complete.  "Complete" is defined as downloading
      * from at least one peer all the blocks that are in that peer's inventory.
      */

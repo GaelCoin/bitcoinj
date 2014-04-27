@@ -38,7 +38,7 @@ public class LitecoinParams extends NetworkParameters {
         id = "org.litecoin.production";
         proofOfWorkLimit = Utils.decodeCompactBits(0x1e0fffffL);
         addressHeader = 15;
-        acceptableAddressCodes = new int[] { 48 };
+        acceptableAddressCodes = new int[] { 15 };
         port = 12622;
         packetMagic = 0xfbc0b6dbL;
         dumpedPrivateKeyHeader = 128 + addressHeader;
@@ -56,13 +56,13 @@ public class LitecoinParams extends NetworkParameters {
             //
             //   "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
             byte[] bytes = Hex.decode
-                    ("0497269736820756e69766572736974696573206661696c20746f206d616b65206c697374206f6620746f702031303020696e737469747574696f6e73");
+                    ("04ffff001d01043c497269736820756e69766572736974696573206661696c20746f206d616b65206c697374206f6620746f702031303020696e737469747574696f6e73");
             t.addInput(new TransactionInput(this, t, bytes));
             ByteArrayOutputStream scriptPubKeyBytes = new ByteArrayOutputStream();
             Script.writeBytes(scriptPubKeyBytes, Hex.decode
                     ("040184710fa689ad5023690c80f3a49c8f13f8d45b8c857fbcbc8bc4a8e4d3eb4b10f4d4604fa08dce601aaf0f470216fe1b51850b4acf21b179c45070ac7b03a9"));
             scriptPubKeyBytes.write(ScriptOpCodes.OP_CHECKSIG);
-            t.addOutput(new TransactionOutput(this, t, Utils.toNanoCoins(50, 0), scriptPubKeyBytes.toByteArray()));
+            t.addOutput(new TransactionOutput(this, t, Utils.toNanoCoins(25, 0), scriptPubKeyBytes.toByteArray()));
         } catch (Exception e) {
             // Cannot happen.
             throw new RuntimeException(e);
